@@ -1,0 +1,100 @@
+package Parser;
+import Errors.LexerException;
+import java_cup.runtime.*;
+import AST.*;
+
+parser code {:
+public void syntax_error(Symbol s) {
+  report_error("Error de sintaxis en linea " + s.left, null);
+}
+
+public void unrecovered_syntax_error(Symbol s) throws
+  java.lang.Exception {
+  report_fatal_error("", null);
+}
+
+:};
+
+terminal COMA, PC, PAREN, TESIS, BEGIN, END, ASIG, AND, OR, NOT, IF, THEN, PROG, DECL, WHILE, DO, PRINT, BRAC, KET, IN, UNION, INTERSEC, CARD, LOWEST_ELEM, MAS, MENOS, MUL, DIV, MAYOR, MENOR, IGUAL, INT2STR, EMPTYSET, UMINUS;
+
+terminal Integer CINT;
+terminal Boolean CLOG;
+terminal String CSTR;
+terminal String IDENT;
+terminal Integer TYPE;
+
+non terminal S S;  
+non terminal IdentList IdentList; 
+non terminal StatementList StatementList, Body;   
+non terminal Statement Statement;  
+non terminal Exp Exp; 
+non terminal LExp LExp;
+non terminal LDecl LDecl;
+non terminal Decl Decl;
+
+precedence left UNION;
+precedence left INTERSEC;
+precedence left IN;
+precedence left OR;
+precedence left AND;
+precedence left NOT;
+precedence left IGUAL;
+precedence left MENOR,MAYOR;
+precedence left MAS,MENOS;
+precedence left MUL,DIV;
+precedence left UMINUS; 
+
+
+start with S;
+
+S ::= PROG IDENT:i1 DECL LDecl:ld1 Body:b1 {:RESULT=new S(i1,ld1, b1);:}
+		|PROG IDENT:i1 Body:b1 {:RESULT=new S(i1, b1);:};
+
+LDecl ::= Decl:d2 PC {:RESULT=new LDecl(d2);:}
+		|Decl:d2 PC LDecl:ld2 {:RESULT=new LDecl(d2, ld2);:};
+
+Decl ::= TYPE:t1 IdentList:il1 {:RESULT=new Decl(t1.intValue(), il1);:} ;
+
+IdentList ::= IDENT:i2 {:RESULT=new IdentList(i2);:}
+			|IDENT:i2 COMA IdentList:il3 {:RESULT=new IdentList(i2,il3);:};
+
+Body ::= BEGIN StatementList:ls1 END PC {:RESULT=new StatementList(ls1);:};
+
+LExp ::= Exp:e1 COMA LExp:le1 {:RESULT=new LExp(e1, le1);:}
+		| Exp:e1 {:RESULT=new LExp(e1);:};
+
+StatementList ::= Statement:s2 PC {:RESULT=new StatementList(s2);:}
+				|Statement:s2 PC StatementList:sl1 {:RESULT=new StatementList(s2, sl1);:};
+
+Statement ::= IDENT:i3 ASIG Exp:e1 {:RESULT=new Asign(i3, e1);:}
+			|PRINT PAREN Exp:e1 TESIS {:RESULT=new Print(e1);:} 
+			|IF Exp:e1 THEN StatementList:sl2 END {:RESULT=new Cond(e1, sl2);:}
+			|WHILE Exp:e1 DO StatementList:sl2 END {:RESULT=new Bucle(e1, sl2);:};
+
+
+Exp ::= IDENT:s {:RESULT=new Variable(s);:}
+		| PAREN Exp:e1 TESIS {:RESULT=e1;:} 
+		| CINT:i1 {:RESULT=new CInt(i1);:}
+		| Exp:e1 MAS Exp:e2 {:RESULT=new Mas(e1, e2);:}
+		| Exp:e1 MENOS Exp:e2 {:RESULT=new Menos(e1, e2);:}
+		| Exp:e1 MUL Exp:e2 {:RESULT=new Mult(e1, e2);:}
+		| Exp:e1 DIV Exp:e2 {:RESULT=new Division(e1, e2);:}
+		| MENOS Exp:e1 {:RESULT=new Opuesto(e1);:} %prec UMINUS
+		| CARD PAREN Exp:e1 TESIS {:RESULT=new Card(e1);:}
+		| LOWEST_ELEM PAREN Exp:e1 TESIS {:RESULT=new LowestElem(e1);:}
+		| Exp:e1 UNION Exp:e2 {:RESULT=new Union(e1, e2);:}
+		| Exp:e1 INTERSEC Exp:e2 {:RESULT=new Interseccion(e1, e2);:}
+		| CSTR:s {:RESULT=new CStr(s);:}
+		| INT2STR PAREN Exp:e TESIS {:RESULT=new Int2str(e);:}
+		| CLOG:b1 {:RESULT=new CLog(b1);:}
+		| Exp:e1 AND Exp:e2 {:RESULT=new And(e1, e2);:}
+		| Exp:e1 OR Exp:e2 {:RESULT=new Or(e1, e2);:}
+		| NOT Exp:e1 {:RESULT=new Not(e1);:}
+		| Exp:e1 MAYOR Exp:e2 {:RESULT=new Mayor(e1, e2);:}
+		| Exp:e1 MENOR Exp:e2 {:RESULT=new Menor(e1, e2);:}
+		| Exp:e1 IGUAL Exp:e2 {:RESULT=new Igual(e1, e2);:}
+		| BRAC LExp:le1 KET {:RESULT=new CIntset(le1);:}
+		| Exp:e1 IN Exp:e2 {:RESULT=new In(e1, e2);:}
+		| BRAC KET {:RESULT=new EmptySet();:}
+		| EMPTYSET {:RESULT=new EmptySet();:};
+

@@ -1,0 +1,4 @@
+Cardinal de a= 6
+Cardinal de b= 5
+Cardinal de c= 10
+Cardinal de d= 1

@@ -1,0 +1,81 @@
+package Lexer;
+
+import Errors.LexerException;
+import Parser.sym;
+import AST.*;
+
+%%
+%{
+private java_cup.runtime.Symbol tok(int k, Object value) {
+//  System.out.println("Token: " + k);
+  return new java_cup.runtime.Symbol(k, yyline, 0, value); 
+}
+%}
+
+%public
+%cup
+%line
+%yylexthrow{
+LexerException
+%yylexthrow} 
+%eofval{
+{return tok(sym.EOF, null); }
+%eofval}
+
+letra= [a-zA-Z]
+
+
+%%
+and			{return tok(sym.AND, null); }
+begin		{return tok(sym.BEGIN, null); }
+or			{return tok(sym.OR, null); }
+pf2013		{return tok(sym.PROG, null); }
+decl		{return tok(sym.DECL, null); }
+while		{return tok(sym.WHILE, null); }
+do			{return tok(sym.DO, null); }
+print		{return tok(sym.PRINT, null); }
+in			{return tok(sym.IN, null); }
+not			{return tok(sym.NOT, null); }
+union		{return tok(sym.UNION, null); }
+intersec	{return tok(sym.INTERSEC, null); }
+card		{return tok(sym.CARD, null); }
+lowest_elem	{return tok(sym.LOWEST_ELEM, null); }
+int2str		{return tok(sym.INT2STR, null); }
+emptyset	{return tok(sym.EMPTYSET, null); }
+if			{return tok(sym.IF, null); }
+then		{return tok(sym.THEN, null); }
+end			{return tok(sym.END, null); }
+
+int			{return tok(sym.TYPE, new Integer(0)); }
+bool		{return tok(sym.TYPE, new Integer(1)); }
+str			{return tok(sym.TYPE, new Integer(2)); }
+intset		{return tok(sym.TYPE, new Integer(3)); }
+
+true		{return tok(sym.CLOG, new Boolean(true)); }
+false		{return tok(sym.CLOG, new Boolean(false)); }
+
+[0-9]+		{return tok(sym.CINT, new Integer(yytext())); }
+
+
+";"		{return tok(sym.PC, null); }
+":="	{return tok(sym.ASIG, null); }
+"<"		{return tok(sym.MENOR, null); }
+">"		{return tok(sym.MAYOR, null); }
+"+"		{return tok(sym.MAS, null); }
+"-"		{return tok(sym.MENOS, null); }
+"/"		{return tok(sym.DIV, null); }
+"*"		{return tok(sym.MUL, null); }
+"("		{return tok(sym.PAREN, null); }
+")"		{return tok(sym.TESIS, null); }
+"="		{return tok(sym.IGUAL, null); }
+","		{return tok(sym.COMA, null); }
+"{"		{return tok(sym.BRAC, null); }
+"}"		{return tok(sym.KET, null); }
+
+{letra}({letra}|[0-9])*	{return tok(sym.IDENT, yytext()); }
+
+[ \t\r\n\f] { /* ignore white space. */ }
+
+(\")([^\"]|\\\")*(\") {return tok(sym.CSTR, new String(yytext())); }
+
+. { System.err.println("Illegal character: "+yytext()); }
