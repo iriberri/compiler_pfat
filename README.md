@@ -15,7 +15,7 @@ The build script assumes that we have the folders `java_cup_v10k` ([manual](http
 ```
 G=<ET, EN, S, P>
 
-ET= {PROG, IDENT, IN, OUT, LOCAL, SC, TYPE,
+ET= {PROG, IDENT, IN, OUT, LOCAL, PC, TYPE,
 COMMA, CBRAC, CKET, ASOP, IF, THEN,
 ENDIF, CLOG, CINT, PLUS, BRAC,
 KET, EQUALS}
@@ -35,8 +35,8 @@ P= {
 
 <Local> -> LOCAL <LDecl>,
 
-<LDecl> -> <Decl> SC
-       | <Decl> SC <LDecl>,
+<LDecl> -> <Decl> PC
+       | <Decl> PC <LDecl>,
 
 <Decl> -> TYPE <Lvar>, 
 
@@ -45,26 +45,33 @@ P= {
        
 <Body> -> CBRAC <Statement> CKET,
 
-<Statement> -> <StSimp> SC <Statement>,
-       | <StSimp> SC,
+<Statement> -> <StSimp> PC <Statement>,
+       | <StSimp> PC,
 
-<StSimp> -> <Asign>
+<StSimp> -> <Assign>
+	|   <Print>
 	|   <Cond>
-	|   <Repet>
+	|   <Loop>,
 
-<Asign>-> IDENT ASOP <Exp>
+<Assign> -> IDENT ASOP <Exp>,
 
-<Cond>-> IF <Exp> THEN <Sent> ENDIF 
-    |   IF <Exp> THEN <Sent> ELSE <Sent> ENDIF 
-    |   IF <Exp> THEN <Sent> THENX <Sent> ELSE <Sent> ENDIF 
+<Print> -> PRINT BRAC <Exp> KET,
 
-[...]
+<Cond> -> IF <Exp> THEN <Statement> END,
+
+<Loop> -> WHEN <Exp> DO <Statement> END
+
 
 ```
 
 # Tokens
 
+
 ```
-COMA, PC, PAREN, TESIS, BEGIN, END, ASIG, AND, OR, NOT, IF, THEN, PROG, DECL, WHILE, DO, PRINT, BRAC, KET, IN, UNION, INTERSEC, CARD, LOWEST_ELEM, MAS, MENOS, MUL, DIV, MAYOR, MENOR, IGUAL, INT2STR, EMPTYSET, UMINUS, CINT, CLOG, CSTR, IDENT, TYPE
+COMA, PC, PAREN, TESIS, BEGIN, END, ASIG, AND, OR, NOT, IF,
+THEN, PROG, DECL, WHILE, DO, PRINT, BRAC, KET, IN, UNION,
+INTERSEC, CARD, LOWEST_ELEM, MAS, MENOS, MUL, DIV, MAYOR,
+MENOR, IGUAL, INT2STR, EMPTYSET, UMINUS, CINT, CLOG, CSTR,
+IDENT, TYPE
 
 ```
