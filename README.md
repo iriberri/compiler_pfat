@@ -60,6 +60,7 @@ P= {
 <Cond> -> IF <Exp> THEN <Statement> END,
 
 <Loop> -> WHEN <Exp> DO <Statement> END
+}
 
 
 ```
