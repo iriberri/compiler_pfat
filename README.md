@@ -6,9 +6,9 @@ This compiler from our specific grammar to Java performs:
 
 * Lexical (JLex) and syntactical (CUP) analysis
 * Grammar analysis
-* Code generation, from our grammar to Java
+* Code generation, from our language to Java
 
-The build script assumes that we have the folders `java_cup_v10k` ([manual](http://www.cs.princeton.edu/~appel/modern/java/CUP/manual.html), [source](http://pkgs.fedoraproject.org/repo/pkgs/java_cup/java_cup_v10k.tar.gz/8b11edfec13c590ea443d0f0ae0da479/java_cup_v10k.tar.gz)) and `JLex` ([manual](http://www.cs.princeton.edu/~appel/modern/java/JLex/current/manual.html), [source](https://www.cs.princeton.edu/~appel/modern/java/JLex/Archive/1.2.6/Main.java)) in the root folder.
+The build script assumes the existence of the CUP and JLex tools in the folders `java_cup_v10k` ([manual](http://www.cs.princeton.edu/~appel/modern/java/CUP/manual.html), [source](http://pkgs.fedoraproject.org/repo/pkgs/java_cup/java_cup_v10k.tar.gz/8b11edfec13c590ea443d0f0ae0da479/java_cup_v10k.tar.gz)) and `JLex` ([manual](http://www.cs.princeton.edu/~appel/modern/java/JLex/current/manual.html), [source](https://www.cs.princeton.edu/~appel/modern/java/JLex/Archive/1.2.6/Main.java)) in the root folder.
 
 # Source language
 
